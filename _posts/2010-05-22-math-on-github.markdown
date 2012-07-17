@@ -11,8 +11,7 @@ HTML when pushed to GitHub.
 To render a mathematical expression [MathJax] is used. Mathematical
 expression are simply written in LaTeX and MathJax will hande the rest.
 
-Example: When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are
-$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+<p>Example: When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$</p>
 
 [Markdown]: http://en.wikipedia.org/wiki/Markdown
 

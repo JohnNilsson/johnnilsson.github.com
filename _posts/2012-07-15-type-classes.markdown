@@ -2,7 +2,6 @@
 layout: post
 title: Type classes for C# programmers
 tags: code
-encoding: utf-8
 ---
 
 Rich Hickey [talked][simple1] [about][simple2] ways to avoid complexity in programming. One of the
@@ -55,7 +54,7 @@ this code each time someone would like to support another case for an addable
 type. Which is precisely what the expression problem is all about.
 
 It also suffers from lack of type safety. Invoking this code will compile
-event if the type we are trying to sum isn't supported.
+even if the type we are trying to sum isn't supported.
 
 
 Ad-hoc polymorphism
@@ -88,6 +87,9 @@ all supported types to remove this blatant violation of the DRY principle.
 One problem we must overcome first is that our add-operation is just
 as ad-hoc as our sum-operation.
 
+
+Subtype polymorphism
+--------------------
 Lets apply the standard OOP-solution, subtype polymorphism, to fix
 this:
 
@@ -113,8 +115,12 @@ side of the expression problem.
 Unfortunately we are also now back not knowing what to do with the zero-case.
 
 This particular implementation also suffers from a type safety issue where each
-Add-implementation must check for compatible types at run-time. We can fix this
-with type parameters, which I'll include here just so you can stop thinking
+Add-implementation must check for compatible types at run-time.
+
+Parametric Subtype Polymorphism
+-------------------------------
+
+We can fix this with type parameters, which I'll include here just so you can stop thinking
 about it.
 
 ```c#
@@ -131,10 +137,12 @@ public static T Sum<T>(this IEnumerable<T> summables, T zero) where T : Addable<
 }
 ```
 
-Parametric Polymorphism
------------------------
 We still need to fix the bigger issue of how to add cases for types we can't
 edit though.
+
+
+Parametric Polymorphism
+-----------------------
 
 To resolve the situation we could abandon the Addable abstraction and rely
 entirely on parametric polymorphism where we the caller supply us both with
@@ -161,14 +169,21 @@ neither our Sum-operation or any types needs to change to support new cases.
 The problem is that we've put the responsibility of verifying the contract of the
 add-operation on to the caller of our Sum-operation. Not a very nice thing to do.
 
-This is the part where type classes enter the picture. We would like to declare the contract
+
+The Monoid
+----------
+
+We would like to declare the contract
 which our Sum-operation depends on, and we would like implementations of this contract
 to be available to our poor API-user.
 
-Our contract stipulates the relationship between add and zero like so:
-$$add(zero, x) = x = add(x, zero)$$
-$$add(x, add(y, z)) = add(add(x, y), z)$$
-for any x, y and z.
+<p>Our contract stipulates the relationship between add and zero like so:
+$$\forall x, y, z \in \mathrm{T} \begin{cases}
+    \mathrm{add}(\mathrm{zero}, x) = x, & \text{Left identity} \\
+    \mathrm{add}(x, \mathrm{zero}) = x, & \text{Right identity} \\
+    \mathrm{add}(\mathrm{add}(x, y), z) = \mathrm{add}(x, \mathrm{add}(y, z)), & \text{Associative}
+\end{cases}$$</p>
+
 In fact there is a concept like this in abstract algebra called a Monoid.
 
 ```c#
@@ -200,6 +215,9 @@ public static T Sum<T>(this IEnumerable<T> summables, Monoid<T> mon)
 }
 ```
 
+Type Classes
+------------
+
 Now we have a fully generic sum operation where the contract
 for being summable is extracted into the Monoid type class.
 
@@ -226,7 +244,7 @@ public static T Sum<T>(this IEnumerable<T> ts)
 ```
 
 A slightly more verbose approach is to revert back to the original
-ad-hoc approach. But this time we can reuse all parts of the code.
+ad-hoc polymorphism. But this time we can reuse all parts of the code.
 We cold even generate this code using a T4 template.
 
 ```c#
