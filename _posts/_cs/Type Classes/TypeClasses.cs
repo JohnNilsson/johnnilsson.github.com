@@ -164,7 +164,7 @@ namespace TypeClassExample
     /// -----------------------
     ///
     /// To resolve the situation we could abandon the Addable abstraction and rely
-    /// entirely on parametric polymorphism where we the caller supply us both with
+    /// entirely on parametric polymorphism where we ask the caller supply us both with
     /// the zero case and the add-operation.
     public static class FullyParametricSum
     {
@@ -275,7 +275,7 @@ namespace TypeClassExample
     ///
     /// A slightly more verbose approach is to revert back to the original
     /// ad-hoc polymorphism. But this time we can reuse all parts of the code.
-    /// We cold even generate this code using a T4 template.
+    /// We could even generate this code using a T4 template.
     public static class ExplicitSum
     {
         /// ```
